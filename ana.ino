@@ -6,7 +6,29 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <Servo.h>
+#include <NewPing.h>
 
+#define TRIGGER_PIN1 
+#define ECHO_PIN1 
+#define TRIGGER_PIN2 
+#define ECHO_PIN2 
+#define TRIGGER_PIN3 
+#define ECHO_PIN3 
+#define MAX_DISTANCE 400  
+
+int Rmotor1 =  ;
+int Rmotor2 = ;
+int enLmotor =  ;
+int Lmotor1 =  ;
+int Lmotor2 =  ;
+int enRmotor = ;
+
+ 
+
+NewPing sonar1(TRIGGER_PIN1, ECHO_PIN1, MAX_DISTANCE);
+NewPing sonar2(TRIGGER_PIN2, ECHO_PIN2, MAX_DISTANCE);
+NewPing sonar3(TRIGGER_PIN3, ECHO_PIN3, MAX_DISTANCE);
+float duration, distance;
 
 unsigned long lastExecutedMillis_1 = 0; // vairable to save the last executed time for code block 1
 unsigned long lastExecutedMillis_2 = 0;
@@ -14,9 +36,6 @@ unsigned long lastExecutedMillis_2 = 0;
 
 Servo solservo;  // create servo object to control a servo
 Servo sagservo;  // create servo object to control a servo
-MeUltrasonicSensor ultrasonic_3(3);
-MeUltrasonicSensor ultrasonic_4(4);
-MeUltrasonicSensor ultrasonic_8(8);
 #define s0 A3 //Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
 #define s1 A4
 #define s2 A1
@@ -38,10 +57,6 @@ double mesafe4;
 double mesafe8;
 const int pingPin = 12; // Tetikleyici/Trigger Pini Tanımı
 const int echoPin = 11; // Yankı/Echo Pini Tanımı
-const int pingPin = 12; // Tetikleyici/Trigger Pini Tanımı
-const int echoPin = 11; // Yankı/Echo Pini Tanımı
-const int pingPin = 12; // Tetikleyici/Trigger Pini Tanımı
-const int echoPin = 11; // Yankı/Echo Pini Tanımı
 int sagg=0;
 int soll=0;
 
@@ -50,50 +65,82 @@ int soll=0;
 
 void ileri()
 {
-    motor_9.run(-200);
-    motor_10.run(-200);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 100);
+    analogWrite (enLmotor, 100);
 }
 void yileri()
 {
-    motor_9.run(-50);
-    motor_10.run(-50);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 50);
+    analogWrite (enLmotor, 50);
 }
 void geri()
 {
-    motor_9.run(100);
-    motor_10.run(100);
+    digitalWrite(Lmotor1,HIGH);
+    digitalWrite(Lmotor2,LOW);
+    digitalWrite(Rmotor1,LOW);
+    digitalWrite(Rmotor2,HIGH);
+    analogWrite (enRmotor, 100);
+    analogWrite (enLmotor, 100);
 }
 void ygeri()
 {
-    motor_9.run(50);
-    motor_10.run(50);
+    digitalWrite(Lmotor1,HIGH);
+    digitalWrite(Lmotor2,LOW);
+    digitalWrite(Rmotor1,LOW);
+    digitalWrite(Rmotor2,HIGH);
+    analogWrite (enRmotor, 50);
+    analogWrite (enLmotor, 50);
 }
 
 void sag()
 {
-    motor_9.run(-100);
-    motor_10.run(100);
+    digitalWrite(Lmotor1,HIGH);
+    digitalWrite(Lmotor2,LOW);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 75);
+    analogWrite (enLmotor, 75);
   }
 
 void sol()
   {
-     motor_9.run(100);
-    motor_10.run(-100);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,LOW);
+    digitalWrite(Rmotor2,HIGH);
+    analogWrite (enRmotor, 75);
+    analogWrite (enLmotor, 75);
   }
 
    void hafif_sag()
   {
-    motor_9.run(-150);
-    motor_10.run(-50);
+    digitalWrite(Lmotor1,HIGH);
+    digitalWrite(Lmotor2,LOW);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 50);
+    analogWrite (enLmotor, 50);
   }
 
   void hafif_sol()
   {
-    motor_9.run(-50);
-    motor_10.run(-150);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,LOW);
+    digitalWrite(Rmotor2,HIGH);
+    analogWrite (enRmotor, 50);
+    analogWrite (enLmotor, 50);
   }
 
-
+int pos; //????????????
 void sagkapiac()
 {
   for (pos = 0; pos <= 150; pos += 5) { // goes from 0 degrees to 150 degrees
@@ -132,6 +179,8 @@ void solkapikapa()
 
 
 void setup(void) {
+  sagservo.attach(A3);
+  solservo.attach(A2); 
   pinMode(s0, OUTPUT); //S0, S1, S2 ve S3 pinlerini OUTPUT olarak tanımlıyoruz  pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);
@@ -140,10 +189,10 @@ void setup(void) {
   digitalWrite(s0, HIGH);
  Serial.begin(9600);
  
-  myservo1.attach(A2);  // attaches the servo on pin 9 to the servo object
-  myservo1.write(0); 
-  myservo2.attach(A3);  // attaches the servo on pin 9 to the servo object
-  myservo2.write(180);
+// attaches the servo on pin 9 to the servo object
+  solservo.write(0); 
+  // attaches the servo on pin 9 to the servo object
+  sagservo.write(180);
    
   pinMode(13,OUTPUT);  // KIRMIZI
   pinMode(12,OUTPUT);  //MAVİ
@@ -268,14 +317,14 @@ void baslangic(){
 }
 
 void geri_donme(){
-   mesafe3 = ultrasonic_3.distanceCm();
-   mesafe8 = ultrasonic_8.distanceCm();
-   mesafe4 = ultrasonic_4.distanceCm();
+   mesafe3 = sonar1.ping_cm();
+   mesafe8 = sonar2.ping_cm();
+   mesafe4 = sonar3.ping_cm();
 if ( base == 0){
   while(mesafe3>30){
-    mesafe3 = ultrasonic_3.distanceCm();
-   mesafe8 = ultrasonic_4.distanceCm();
-   mesafe4 = ultrasonic_8.distanceCm();
+   mesafe3 = sonar1.ping_cm();
+   mesafe8 = sonar2.ping_cm();
+   mesafe4 = sonar3.ping_cm();
     ileri();
 
     
@@ -283,8 +332,12 @@ if ( base == 0){
     if(kirmizi>yesil and kirmizi>mavi and colorTemp<bas_ct*2 and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    
-    motor_9.run(0);
-    motor_10.run(0); 
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 0);
+    analogWrite (enLmotor, 0); 
     base++;  
     break;
    }
@@ -294,8 +347,12 @@ if ( base == 0){
   if(kendi_rengin == 2){
     if(mavi>kirmizi and mavi>yesil and mavi<2000)
   {Serial.println(" Mavi zemin");
-    motor_9.run(0);
-    motor_10.run(0); // MAVİ
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 0);
+    analogWrite (enLmotor, 0);; // MAVİ
     sayac++;
     break;
   }
@@ -308,17 +365,21 @@ if(base ==0){
      tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature(r, g, b);
   lux = tcs.calculateLux(r, g, b);
-    mesafe3 = ultrasonic_3.distanceCm();
-   mesafe8 = ultrasonic_8.distanceCm();
-   mesafe4 = ultrasonic_4.distanceCm();
+   mesafe3 = sonar1.ping_cm();
+   mesafe8 = sonar2.ping_cm();
+   mesafe4 = sonar3.ping_cm();
     sag();
 
     if(kendi_rengin == 1){
     if(kirmizi>yesil and kirmizi>mavi and colorTemp<bas_ct*2 and b<1200)
    {Serial.println(" Kırmızı zemin");
    
-    motor_9.run(0);
-    motor_10.run(0);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 0);
+    analogWrite (enLmotor, 0);
     base++;
     break;   
    }
@@ -326,10 +387,14 @@ if(base ==0){
   
 
    if(kendi_rengin == 2){
-   if(mavi>kirmizi and mavi>yeşil and b<2000)
+   if(mavi>kirmizi and mavi>yesil and b<2000)
   {Serial.println(" Mavi zemin");
-    motor_9.run(0);
-    motor_10.run(0);
+    digitalWrite(Lmotor1,LOW);
+    digitalWrite(Lmotor2,HIGH);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 0);
+    analogWrite (enLmotor, 0);
     sayac++;
     break;// MAVİ
    }
@@ -364,11 +429,13 @@ if(base ==0){
 
 
 void loop(void) {
+    
+ 
 
   Serial.println(kendi_rengin);
-   mesafe3 = ultrasonic_3.distanceCm();
-   mesafe8 = ultrasonic_8.distanceCm();
-   mesafe4 = ultrasonic_4.distanceCm();
+   mesafe3 = sonar1.ping_cm();
+   mesafe8 = sonar2.ping_cm();
+   mesafe4 = sonar3.ping_cm();
    
   if(maviyumurta>0 || kirmiziyumurta>0){
       geri_donme();
@@ -389,7 +456,7 @@ void loop(void) {
 
   digitalWrite(s2, HIGH); //Yeşili filtrelemek için
   digitalWrite(s3, HIGH);
-  yeşil = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
+  yesil = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
 
   digitalWrite(s2, LOW); //Maviyi filtrelemek için
   digitalWrite(s3, HIGH);
@@ -399,7 +466,7 @@ void loop(void) {
   Serial.print("Kırmızı= ", kirmizi);
   Serial.print("  ");
   delay(10); //50 milisaniye bekle
-  Serial.print("Yeşil= ", yeşil);
+  Serial.print("Yesil= ", yesil);
   Serial.print("   ");
   delay(10); //50 milisaniye bekle
   Serial.print("Mavi= ", mavi);
@@ -414,7 +481,7 @@ if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
    solkapikapa();
    kirmiziyumurta++;
 }
- else  if(mavi>kirmizi and mavi>yeşil and colorTemp>bas_ct*2 and mavi > 2000)
+ else  if(mavi>kirmizi and mavi>yesil and colorTemp>bas_ct*2 and mavi > 2000)
    {Serial.println(" Mavi yumurta");
    sagkapiac();
    hafif_sol();
