@@ -434,3 +434,5 @@ if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
   Serial.println(bas_zem);
   
 }
+
+naber ömer
