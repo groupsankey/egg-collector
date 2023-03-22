@@ -8,20 +8,23 @@
 #include <Servo.h>
 #include <NewPing.h>
 
-#define TRIGGER_PIN1 
-#define ECHO_PIN1 
-#define TRIGGER_PIN2 
-#define ECHO_PIN2 
-#define TRIGGER_PIN3 
-#define ECHO_PIN3 
+#define TRIGGER_PIN1 11
+#define ECHO_PIN1 10
+#define TRIGGER_PIN2 12
+#define ECHO_PIN2 13
+#define TRIGGER_PIN3 1
+#define ECHO_PIN3 1
 #define MAX_DISTANCE 400  
 
-int Rmotor1 =  ;
-int Rmotor2 = ;
-int enLmotor =  ;
-int Lmotor1 =  ;
-int Lmotor2 =  ;
-int enRmotor = ;
+int Lmotor1 = 7 ;
+int Lmotor2 = 6;
+int enRmotor = 10 ;
+int Rmotor1 =  8;
+int Rmotor2 =  9;
+int enLmotor = 5;
+int sayac=0;
+int kirmiziyumurta=0;
+int maviyumurta=0;
 
  
 
@@ -59,7 +62,7 @@ const int pingPin = 12; // Tetikleyici/Trigger Pini Tanımı
 const int echoPin = 11; // Yankı/Echo Pini Tanımı
 int sagg=0;
 int soll=0;
-
+int kendi_rengin=0;
 
 
 
@@ -179,8 +182,8 @@ void solkapikapa()
 
 
 void setup(void) {
-  sagservo.attach(A3);
-  solservo.attach(A2); 
+  sagservo.attach(A6);
+  solservo.attach(A7); 
   pinMode(s0, OUTPUT); //S0, S1, S2 ve S3 pinlerini OUTPUT olarak tanımlıyoruz  pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);
@@ -285,7 +288,7 @@ void solcarpma(){
 
 
 void renk_belirleme(){
-  if(kirmizi>yesil and kirmizi>mavi and colorTemp<bas_ct*2 and mavi<1200)
+  if(kirmizi>yesil and kirmizi>mavi and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    kendi_rengin = 1;   // KIRMIZI
    digitalWrite(12,LOW);
@@ -329,7 +332,7 @@ if ( base == 0){
 
     
     if(kendi_rengin == 1){
-    if(kirmizi>yesil and kirmizi>mavi and colorTemp<bas_ct*2 and mavi<1200)
+    if(kirmizi>yesil and kirmizi>mavi and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    
     digitalWrite(Lmotor1,LOW);
@@ -362,16 +365,14 @@ if ( base == 0){
 
 if(base ==0){  
   while(mesafe4>20){
-     tcs.getRawData(&r, &g, &b, &c);
-  colorTemp = tcs.calculateColorTemperature(r, g, b);
-  lux = tcs.calculateLux(r, g, b);
+ 
    mesafe3 = sonar1.ping_cm();
    mesafe8 = sonar2.ping_cm();
    mesafe4 = sonar3.ping_cm();
     sag();
 
     if(kendi_rengin == 1){
-    if(kirmizi>yesil and kirmizi>mavi and colorTemp<bas_ct*2 and b<1200)
+    if(kirmizi>yesil and kirmizi>mavi and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    
     digitalWrite(Lmotor1,LOW);
@@ -387,7 +388,7 @@ if(base ==0){
   
 
    if(kendi_rengin == 2){
-   if(mavi>kirmizi and mavi>yesil and b<2000)
+   if(mavi>kirmizi and mavi>yesil and mavi<2000)
   {Serial.println(" Mavi zemin");
     digitalWrite(Lmotor1,LOW);
     digitalWrite(Lmotor2,HIGH);
@@ -429,10 +430,8 @@ if(base ==0){
 
 
 void loop(void) {
-    
- 
-
-  Serial.println(kendi_rengin);
+  ileri();
+  
    mesafe3 = sonar1.ping_cm();
    mesafe8 = sonar2.ping_cm();
    mesafe4 = sonar3.ping_cm();
@@ -440,14 +439,10 @@ void loop(void) {
   if(maviyumurta>0 || kirmiziyumurta>0){
       geri_donme();
   }
-
-  if(kendi_rengin ==1){
-     
-  }
   
-  baslangic();
-  Serial.println(mesafe);
-  int son_zemin;
+  //baslangic();
+  Serial.println(mesafe3);
+  int son_zeminx;
 
 
   digitalWrite(s2, LOW); //Kırmızıyı filtrelemek için
@@ -462,18 +457,7 @@ void loop(void) {
   digitalWrite(s3, HIGH);
   mavi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
 
-
-  Serial.print("Kırmızı= ", kirmizi);
-  Serial.print("  ");
-  delay(10); //50 milisaniye bekle
-  Serial.print("Yesil= ", yesil);
-  Serial.print("   ");
-  delay(10); //50 milisaniye bekle
-  Serial.print("Mavi= ", mavi);
-  Serial.println();
-  delay(10); //50 milisaniye bekle
-
-if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
+  if(kirmizi>yesil and kirmizi>mavi and kirmizi > 3000){
    Serial.println(" Kırmızı yumurta");
    solkapiac();
    hafif_sag();
@@ -481,7 +465,7 @@ if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
    solkapikapa();
    kirmiziyumurta++;
 }
- else  if(mavi>kirmizi and mavi>yesil and colorTemp>bas_ct*2 and mavi > 2000)
+ else  if(mavi>kirmizi and mavi>yesil and mavi > 2000)
    {Serial.println(" Mavi yumurta");
    sagkapiac();
    hafif_sol();
@@ -492,7 +476,7 @@ if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
    
  else   
     { Serial.println(" Beyaz zemin");
-    son_zemin=30;
+    //son_zemin=30;
     solkapikapa();
     sagkapikapa();}
  Serial.print(" bct ");
@@ -501,5 +485,3 @@ if(kirmizi>yesil and kirmizi>mavi and colorTemp>bas_ct*2 and kirmizi > 3000){
   Serial.println(bas_zem);
   
 }
-
-naber ömer
