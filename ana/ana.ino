@@ -70,8 +70,8 @@ void ileri()
 {
     digitalWrite(Lmotor1,LOW);
     digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Rmotor1,LOW);
+    digitalWrite(Rmotor2,HIGH);
     analogWrite (enRmotor, 100);
     analogWrite (enLmotor, 100);
 }
