@@ -8,20 +8,20 @@
 #include <Servo.h>
 #include <NewPing.h>
 
-#define TRIGGER_PIN1 11
-#define ECHO_PIN1 10
-#define TRIGGER_PIN2 12
-#define ECHO_PIN2 13
-#define TRIGGER_PIN3 1
-#define ECHO_PIN3 1
+#define TRIGGER_PIN1 4 //sol
+#define ECHO_PIN1 3 //sol
+#define TRIGGER_PIN2 11 //sag
+#define ECHO_PIN2 12 //sag
+#define TRIGGER_PIN3 A0 //on
+#define ECHO_PIN3 A1 //on
 #define MAX_DISTANCE 400  
 
-int Lmotor1 = 7 ;
-int Lmotor2 = 6;
-int enRmotor = 10 ;
-int Rmotor1 =  8;
-int Rmotor2 =  9;
-int enLmotor = 5;
+int enRmotor = 5 ;
+int enLmotor = 10;
+int Lmotor1 = 9 ;
+int Lmotor2 = 8;
+int Rmotor1 =  7;
+int Rmotor2 =  6;
 int sayac=0;
 int kirmiziyumurta=0;
 int maviyumurta=0;
@@ -39,11 +39,11 @@ unsigned long lastExecutedMillis_2 = 0;
 
 Servo solservo;  // create servo object to control a servo
 Servo sagservo;  // create servo object to control a servo
-#define s0 A3 //Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
-#define s1 A4
-#define s2 A1
-#define s3 A2
-#define sensorOut A5
+#define s0  A5//Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
+#define s1 A6
+#define s2 A3
+#define s3 A4
+#define sensorOut A2
 
 
 int kirmizi, yesil, mavi = 0; //3 ana renk için değişken tanımlıyoruz
@@ -146,44 +146,42 @@ void sol()
 int pos; //????????????
 void sagkapiac()
 {
-  for (pos = 0; pos <= 150; pos += 5) { // goes from 0 degrees to 150 degrees
-    // in steps of 5 degree
-    sagservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(1000);                       // waits 15ms for the servo to reach the position
-  }      
+  for (pos = 10; pos <= 60; pos += 1) { 
+    // in steps of 1 degree
+    sagservo.write(pos);              
+    delay(5);                       
+  }
   }
 
 void sagkapikapa()
 {
-      for (pos = 150; pos >= 0; pos -= 5) { // goes from 0 degrees to 150 degrees
-    // in steps of 5 degree
-    sagservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(1000);                       // waits 15ms for the servo to reach the position
-  }     
+  for (pos = 60; pos >= 10; pos -= 1) { 
+    sagservo.write(pos);              
+    delay(5);                      
+  }
   }
 
   void solkapiac()
 {
-  for (pos = 0; pos <= 150; pos += 5) { // goes from 0 degrees to 150 degrees
-    // in steps of 5 degree
-    solservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(1000);                       // waits 15ms for the servo to reach the position
-  }   
+    for (pos = 110; pos <= 160; pos += 1) { 
+    // in steps of 1 degree
+    solservo.write(pos);              
+    delay(5);                       
+  } 
   }
   
 void solkapikapa()
 {
-      for (pos = 150; pos >= 0; pos -= 5) { // goes from 0 degrees to 150 degrees
-    // in steps of 5 degree
-    solservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(1000);                       // waits 15ms for the servo to reach the position
-  }     
+  for (pos = 160; pos >= 110; pos -= 1) { 
+    solservo.write(pos);              
+    delay(5);                       
+  } 
   }  
 
 
 void setup(void) {
-  sagservo.attach(A6);
-  solservo.attach(A7); 
+  sagservo.attach(13);
+  solservo.attach(2); 
   pinMode(s0, OUTPUT); //S0, S1, S2 ve S3 pinlerini OUTPUT olarak tanımlıyoruz  pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);

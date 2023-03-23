@@ -1,8 +1,8 @@
-#define s0 A3 //Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
-#define s1 A4
-#define s2 A1
-#define s3 A2
-#define sensorOut A5
+#define s0  A5//Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
+#define s1 A6
+#define s2 A3
+#define s3 A4
+#define sensorOut A2
 int K, Y, M = 0; //3 ana renk için değişken tanımlıyoruz
 void setup() {
   pinMode(s0, OUTPUT); //S0, S1, S2 ve S3 pinlerini OUTPUT olarak tanımlıyoruz

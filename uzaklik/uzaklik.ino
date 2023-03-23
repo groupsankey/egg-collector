@@ -1,5 +1,12 @@
-const int pingPin = 12; // Tetikleyici/Trigger Pini Tanımı
-const int echoPin = 11; // Yankı/Echo Pini Tanımı
+//const int pingPin = A0; 
+//const int echoPin = A1; 
+//const int pingPin = 4; 
+//const int echoPin = 3; 
+//const int pingPin = 11; 
+//const int echoPin = 12; 
+
+
+
 
 void setup() {
    Serial.begin(9600); // Serial Terminali Başlat
