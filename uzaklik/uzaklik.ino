@@ -1,5 +1,5 @@
-//const int pingPin = A0; 
-//const int echoPin = A1; 
+const int pingPin = A0; 
+const int echoPin = A1; 
 //const int pingPin = 4; 
 //const int echoPin = 3; 
 //const int pingPin = 11; 
