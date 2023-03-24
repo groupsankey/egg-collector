@@ -64,8 +64,8 @@ void ileri()
     digitalWrite(Lmotor2,HIGH);
     digitalWrite(Rmotor1,LOW);
     digitalWrite(Rmotor2,HIGH);
-    analogWrite (enRmotor, 150);
-    analogWrite (enLmotor, 150);
+    analogWrite (enRmotor, 100);
+    analogWrite (enLmotor, 100);
 }
 void yileri()
 {
@@ -82,8 +82,8 @@ void geri()
     digitalWrite(Lmotor2,LOW);
     digitalWrite(Rmotor1,LOW);
     digitalWrite(Rmotor2,HIGH);
-    analogWrite (enRmotor, 150);
-    analogWrite (enLmotor, 150);
+    analogWrite (enRmotor, 100);
+    analogWrite (enLmotor, 100);
 }
 void ygeri()
 {
@@ -486,31 +486,10 @@ void loop(void) {
   delay(55); //50 milisaniye bekle
 
 
-  if(kirmizi>yesil and kirmizi>mavi and kirmizi > 3000){
-   Serial.println(" Kırmızı yumurta");
-   solkapiac();
-   hafif_sag();
-   delay(500);
-   solkapikapa();
-   kirmiziyumurta++;
+  if(kirmizi>30 and kirmizi<60 and mavi>30 and mavi<60 and mavi>30 and mavi<60){
+   Serial.println("Beyaz zemin");
+   sag_gezinme();
+
 }
- else  if(mavi>kirmizi and mavi>yesil and mavi > 2000)
-   {Serial.println(" Mavi yumurta");
-   sagkapiac();
-   hafif_sol();
-   delay(500);
-   sagkapikapa();
-   maviyumurta++;
-   }
-   
- else   
-    { Serial.println(" Beyaz zemin");
-    //son_zemin=30;
-    solkapikapa();
-    sagkapikapa();}
- Serial.print(" bct ");
-  Serial.println(bas_ct);
-    Serial.print(" kendi  rengin"); 
-  Serial.println(bas_zem);
-  
+
 }

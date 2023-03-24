@@ -1,45 +1,62 @@
-const int pingPin = A0; 
-const int echoPin = A1; 
-//const int pingPin = 4; 
-//const int echoPin = 3; 
-//const int pingPin = 11; 
-//const int echoPin = 12; 
-
-
-
+const int frontPingPin = A0; // front sensor
+const int frontEchoPin = A1; // front sensor
+const int leftPingPin = 4; // left sensor
+const int leftEchoPin = 3; // left sensor
+const int rightPingPin = 11; // right sensor
+const int rightEchoPin = 12; // right sensor
 
 void setup() {
-   Serial.begin(9600); // Serial Terminali Başlat
+  Serial.begin(9600); // Serial Terminali Başlat
 }
 
 void loop() {
-   long duration, inches, cm;
-   pinMode(pingPin, OUTPUT);
-
-   digitalWrite(pingPin, LOW); // pingPin'in Temizlenmesi
-   delayMicroseconds(2);
-
-   digitalWrite(pingPin, HIGH); // pingPin'i 10 mikro saniye için YÜKSEK duruma ayarlar
-   delayMicroseconds(10);
-   digitalWrite(pingPin, LOW);
-
-   pinMode(echoPin, INPUT);
-   duration = pulseIn(echoPin, HIGH); // echoPin'i okur, ses dalgasının seyahat süresini mikrosaniye cinsinden döndürür
-
-   inches = microsecondsToInches(duration); // Mesafenin Hesaplanması inç cinsinden
-   cm = microsecondsToCentimeters(duration); // Mesafenin Hesaplanması cm cinsinden
-   Serial.print(inches);
-   Serial.print("in, ");
-   Serial.print(cm);
-   Serial.print("cm");
-   Serial.println();
-   delay(100);
-}
-
-long microsecondsToInches(long microseconds) {
-   return microseconds / 74 / 2;
+  long frontDuration, frontCm;
+  long leftDuration, leftCm;
+  long rightDuration, rightCm;
+  // Front Sensor Reading
+  pinMode(frontPingPin, OUTPUT);
+  digitalWrite(frontPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(frontPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(frontPingPin, LOW);
+  pinMode(frontEchoPin, INPUT);
+  frontDuration = pulseIn(frontEchoPin, HIGH);
+  frontCm = microsecondsToCentimeters(frontDuration);
+  // Left Sensor Reading
+  pinMode(leftPingPin, OUTPUT);
+  digitalWrite(leftPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(leftPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(leftPingPin, LOW);
+  pinMode(leftEchoPin, INPUT);
+  leftDuration = pulseIn(leftEchoPin, HIGH);
+  leftCm = microsecondsToCentimeters(leftDuration);
+  // Right Sensor Reading
+  pinMode(rightPingPin, OUTPUT);
+  digitalWrite(rightPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(rightPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(rightPingPin, LOW);
+  pinMode(rightEchoPin, INPUT);
+  rightDuration = pulseIn(rightEchoPin, HIGH);
+  rightCm = microsecondsToCentimeters(rightDuration);
+  // Printing the distance readings to Serial Monitor
+  Serial.print("Front: ");
+  Serial.print(frontCm);
+  Serial.print("cm    ");
+  Serial.print(" Left: ");
+  Serial.print(leftCm);
+  Serial.print("cm    ");
+  Serial.print(" Right: ");
+  Serial.print(rightCm);
+  Serial.print("cm   ");
+  Serial.println();
+  delay(5);
 }
 
 long microsecondsToCentimeters(long microseconds) {
-   return microseconds / 29 / 2;
+  return microseconds / 29 / 2;
 }
