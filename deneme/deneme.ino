@@ -2,6 +2,7 @@
 #define EXE_INTERVAL_2 500 //kaç saniye olacağı
 
 
+
 #include <Wire.h>
 #include <Arduino.h>
 #include <SoftwareSerial.h>
@@ -17,10 +18,11 @@ const int rightEchoPin = 12; // right sensor
 
 int enRmotor = 5 ;
 int enLmotor = 10;
-int Lmotor1 = 9 ;
-int Lmotor2 = 8;
-int Rmotor1 =  7;
-int Rmotor2 =  6;
+int Lmotorb = 9 ;
+int Lmotorf = 8;
+int Rmotorb =  7;
+int Rmotorf =  6;
+
 int sayac=0;
 int kirmiziyumurta=0;
 int maviyumurta=0;
@@ -28,11 +30,12 @@ int maviyumurta=0;
 
 unsigned long lastExecutedMillis_1 = 0; // vairable to save the last executed time for code block 1
 unsigned long lastExecutedMillis_2 = 0;
+long MaxValue = 100;
 
 
 Servo solservo;  // create servo object to control a servo
 Servo sagservo;  // create servo object to control a servo
-#define s0  A5//Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
+#define s0 A5//Bağladığımız pinlere göre tanımlamalarımızı yapıyoruz
 #define s1 A6
 #define s2 A3
 #define s3 A4
@@ -60,77 +63,77 @@ long microsecondsToCentimeters(long microseconds) {
 
 void ileri()
 {
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,LOW);
-    digitalWrite(Rmotor2,HIGH);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 100);
     analogWrite (enLmotor, 100);
 }
 void yileri()
 {
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 50);
     analogWrite (enLmotor, 50);
 }
 void geri()
 {
-    digitalWrite(Lmotor1,HIGH);
-    digitalWrite(Lmotor2,LOW);
-    digitalWrite(Rmotor1,LOW);
-    digitalWrite(Rmotor2,HIGH);
-    analogWrite (enRmotor, 100);
-    analogWrite (enLmotor, 100);
+    digitalWrite(Lmotorb,HIGH);
+    digitalWrite(Lmotorf,LOW);
+    digitalWrite(Rmotorf,LOW);
+    digitalWrite(Rmotorb,HIGH);
+    analogWrite (enRmotor, 150);
+    analogWrite (enLmotor, 150);
 }
 void ygeri()
 {
-    digitalWrite(Lmotor1,HIGH);
-    digitalWrite(Lmotor2,LOW);
-    digitalWrite(Rmotor1,LOW);
-    digitalWrite(Rmotor2,HIGH);
+    digitalWrite(Lmotorb,HIGH);
+    digitalWrite(Lmotorf,LOW);
+    digitalWrite(Rmotorf,LOW);
+    digitalWrite(Rmotorb,HIGH);
     analogWrite (enRmotor, 50);
     analogWrite (enLmotor, 50);
 }
 
 void sag()
 {
-    digitalWrite(Lmotor1,HIGH);
-    digitalWrite(Lmotor2,LOW);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,HIGH);
+    digitalWrite(Lmotorf,LOW);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 75);
     analogWrite (enLmotor, 75);
   }
 
 void sol()
   {
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,LOW);
-    digitalWrite(Rmotor2,HIGH);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,LOW);
+    digitalWrite(Rmotorb,HIGH);
     analogWrite (enRmotor, 75);
     analogWrite (enLmotor, 75);
   }
 
    void hafif_sag()
   {
-    digitalWrite(Lmotor1,HIGH);
-    digitalWrite(Lmotor2,LOW);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,HIGH);
+    digitalWrite(Lmotorf,LOW);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 50);
     analogWrite (enLmotor, 50);
   }
 
   void hafif_sol()
   {
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,LOW);
-    digitalWrite(Rmotor2,HIGH);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,LOW);
+    digitalWrite(Rmotorb,HIGH);
     analogWrite (enRmotor, 50);
     analogWrite (enLmotor, 50);
   }
@@ -138,7 +141,7 @@ void sol()
 int pos; //????????????
 void sagkapiac()
 {
-  for (pos = 10; pos <= 60; pos += 1) { 
+  for (pos = 10; pos <= 160; pos += 1) { 
     // in steps of 1 degree
     sagservo.write(pos);              
     delay(5);                       
@@ -147,7 +150,7 @@ void sagkapiac()
 
 void sagkapikapa()
 {
-  for (pos = 60; pos >= 10; pos -= 1) { 
+  for (pos = 160; pos >= 10; pos -= 1) { 
     sagservo.write(pos);              
     delay(5);                      
   }
@@ -170,10 +173,63 @@ void solkapikapa()
   } 
   }  
 
+void uzaklik(){
+
+long frontDuration, frontCm;
+  long leftDuration, leftCm;
+  long rightDuration, rightCm;
+  // Front Sensor Reading
+  pinMode(frontPingPin, OUTPUT);
+  digitalWrite(frontPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(frontPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(frontPingPin, LOW);
+  pinMode(frontEchoPin, INPUT);
+  frontDuration = pulseIn(frontEchoPin, HIGH);
+  frontCm = microsecondsToCentimeters(frontDuration);
+  frontCm=frontCm<MaxValue ? frontCm : MaxValue;
+  // Left Sensor Reading
+  pinMode(leftPingPin, OUTPUT);
+  digitalWrite(leftPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(leftPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(leftPingPin, LOW);
+  pinMode(leftEchoPin, INPUT);
+  leftDuration = pulseIn(leftEchoPin, HIGH);
+  leftCm = microsecondsToCentimeters(leftDuration);
+  leftCm = leftCm<MaxValue ? leftCm : MaxValue;
+  // Right Sensor Reading
+  pinMode(rightPingPin, OUTPUT);
+  digitalWrite(rightPingPin, LOW);
+  delayMicroseconds(1);
+  digitalWrite(rightPingPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(rightPingPin, LOW);
+  pinMode(rightEchoPin, INPUT);
+  rightDuration = pulseIn(rightEchoPin, HIGH);
+  rightCm = microsecondsToCentimeters(rightDuration);
+ rightCm=(rightCm<MaxValue) ? rightCm : MaxValue;
+  // Printing the distance readings to Serial Monitor
+  Serial.print("Front: ");
+  Serial.print(frontCm);
+  Serial.print("cm    ");
+  Serial.print(" Left: ");
+  Serial.print(leftCm);
+  Serial.print("cm    ");
+  Serial.print(" Right: ");
+  Serial.print(rightCm);
+  Serial.print("cm   ");
+  Serial.println();
+
+}
 
 void setup(void) {
+   
   sagservo.attach(13);
   solservo.attach(2); 
+  
   pinMode(s0, OUTPUT); //S0, S1, S2 ve S3 pinlerini OUTPUT olarak tanımlıyoruz  pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);
@@ -187,10 +243,15 @@ void setup(void) {
   // attaches the servo on pin 9 to the servo object
   sagservo.write(110);
    
-  pinMode(13,OUTPUT);  // KIRMIZI
-  pinMode(12,OUTPUT);  //MAVİ
+ pinMode(enLmotor, OUTPUT);
+ pinMode(enRmotor,OUTPUT);
+ pinMode(Lmotorf,OUTPUT);
+ pinMode(Lmotorb,OUTPUT);
+ pinMode(Rmotorf,OUTPUT);
+ pinMode(Rmotorb,OUTPUT);
+ 
 
-
+    
     Serial.println(" ");
     if(kirmizi>yesil and kirmizi>mavi)
    {Serial.println("Kırmızı zemin");
@@ -202,7 +263,7 @@ void setup(void) {
    Serial.println(" Mavi zemin");}
   // Now we're ready to get readings!
 
-renk_belirleme();
+//renk_belirleme();
   
 }
 unsigned long currentMillis=0;
@@ -319,10 +380,10 @@ if ( base == 0){
     if(kirmizi>yesil and kirmizi>mavi and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 0);
     analogWrite (enLmotor, 0); 
     base++;  
@@ -334,10 +395,10 @@ if ( base == 0){
   if(kendi_rengin == 2){
     if(mavi>kirmizi and mavi>yesil and mavi<2000)
   {Serial.println(" Mavi zemin");
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 0);
     analogWrite (enLmotor, 0);; // MAVİ
     sayac++;
@@ -356,10 +417,10 @@ if(base ==0){
     if(kirmizi>yesil and kirmizi>mavi and mavi<1200)
    {Serial.println(" Kırmızı zemin");
    
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 0);
     analogWrite (enLmotor, 0);
     base++;
@@ -371,10 +432,10 @@ if(base ==0){
    if(kendi_rengin == 2){
    if(mavi>kirmizi and mavi>yesil and mavi<2000)
   {Serial.println(" Mavi zemin");
-    digitalWrite(Lmotor1,LOW);
-    digitalWrite(Lmotor2,HIGH);
-    digitalWrite(Rmotor1,HIGH);
-    digitalWrite(Rmotor2,LOW);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
     analogWrite (enRmotor, 0);
     analogWrite (enLmotor, 0);
     sayac++;
@@ -411,52 +472,19 @@ if(base ==0){
 
 
 void loop(void) {
-  ileri();
+  //uzaklik();
+  //baslangic();
+    digitalWrite(Lmotorf,HIGH);
+    digitalWrite(Lmotorb,LOW);
+    digitalWrite(Rmotorf,HIGH);
+    digitalWrite(Rmotorb,LOW);
+    analogWrite (enRmotor, 100);
+    analogWrite (enLmotor, 100);
   
 
-  // Front Sensor Reading
-  pinMode(frontPingPin, OUTPUT);
-  digitalWrite(frontPingPin, LOW);
-  delayMicroseconds(1);
-  digitalWrite(frontPingPin, HIGH);
-  delayMicroseconds(5);
-  digitalWrite(frontPingPin, LOW);
-  pinMode(frontEchoPin, INPUT);
-  frontDuration = pulseIn(frontEchoPin, HIGH);
-  frontCm = microsecondsToCentimeters(frontDuration);
-  // Left Sensor Reading
-  pinMode(leftPingPin, OUTPUT);
-  digitalWrite(leftPingPin, LOW);
-  delayMicroseconds(1);
-  digitalWrite(leftPingPin, HIGH);
-  delayMicroseconds(5);
-  digitalWrite(leftPingPin, LOW);
-  pinMode(leftEchoPin, INPUT);
-  leftDuration = pulseIn(leftEchoPin, HIGH);
-  leftCm = microsecondsToCentimeters(leftDuration);
-  // Right Sensor Reading
-  pinMode(rightPingPin, OUTPUT);
-  digitalWrite(rightPingPin, LOW);
-  delayMicroseconds(1);
-  digitalWrite(rightPingPin, HIGH);
-  delayMicroseconds(5);
-  digitalWrite(rightPingPin, LOW);
-  pinMode(rightEchoPin, INPUT);
-  rightDuration = pulseIn(rightEchoPin, HIGH);
-  rightCm = microsecondsToCentimeters(rightDuration);
-  // Printing the distance readings to Serial Monitor
-  Serial.print("Front: ");
-  Serial.print(frontCm);
-  Serial.print("cm    ");
-  Serial.print(" Left: ");
-  Serial.print(leftCm);
-  Serial.print("cm    ");
-  Serial.print(" Right: ");
-  Serial.print(rightCm);
-  Serial.print("cm   ");
-  Serial.println();
-  delay(5);
-   
+ 
+  
+   /*
   if(maviyumurta>0 || kirmiziyumurta>0){
       geri_donme();
   }
@@ -483,13 +511,37 @@ void loop(void) {
   Serial.print("Mavi= ");
   Serial.print(mavi); //Mavi için aldığımız değeri serial monitöre yazdır
   Serial.println();
-  delay(55); //50 milisaniye bekle
+  delay(5); //50 milisaniye bekle
 
 
-  if(kirmizi>30 and kirmizi<60 and mavi>30 and mavi<60 and mavi>30 and mavi<60){
-   Serial.println("Beyaz zemin");
-   sag_gezinme();
-
+  if(kirmizi>yesil and kirmizi>mavi and kirmizi > 3000){
+   Serial.println(" Kırmızı yumurta");
+   solkapiac();
+   hafif_sag();
+   delay(500);
+   solkapikapa();
+   kirmiziyumurta++;
 }
-
+ else  if(mavi>kirmizi and mavi>yesil and mavi > 2000)
+   {Serial.println(" Mavi yumurta");
+   sagkapiac();
+   hafif_sol();
+   delay(500);
+   sagkapikapa();
+   maviyumurta++;
+   }
+   
+ else   
+    { 
+      Serial.println(" Beyaz zemin");
+    //son_zemin=30;
+    solkapikapa();
+    sagkapikapa();}
+ Serial.print(" bct ");
+  Serial.println(bas_ct);
+    Serial.print(" kendi  rengin"); 
+  Serial.println(bas_zem);
+  
+ }
+*/
 }

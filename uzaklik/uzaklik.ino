@@ -5,12 +5,24 @@ const int leftEchoPin = 3; // left sensor
 const int rightPingPin = 11; // right sensor
 const int rightEchoPin = 12; // right sensor
 
+
+
+
 void setup() {
   Serial.begin(9600); // Serial Terminali Başlat
 }
 
 void loop() {
-  long frontDuration, frontCm;
+  uzaklik();
+}
+
+long microsecondsToCentimeters(long microseconds) {
+  return microseconds / 29 / 2;
+}
+
+void uzaklik(){
+
+long frontDuration, frontCm;
   long leftDuration, leftCm;
   long rightDuration, rightCm;
   // Front Sensor Reading
@@ -23,6 +35,7 @@ void loop() {
   pinMode(frontEchoPin, INPUT);
   frontDuration = pulseIn(frontEchoPin, HIGH);
   frontCm = microsecondsToCentimeters(frontDuration);
+  frontCm=frontCm<MaxValue ? frontCm : MaxValue;
   // Left Sensor Reading
   pinMode(leftPingPin, OUTPUT);
   digitalWrite(leftPingPin, LOW);
@@ -33,6 +46,7 @@ void loop() {
   pinMode(leftEchoPin, INPUT);
   leftDuration = pulseIn(leftEchoPin, HIGH);
   leftCm = microsecondsToCentimeters(leftDuration);
+  leftCm = leftCm<MaxValue ? leftCm : MaxValue;
   // Right Sensor Reading
   pinMode(rightPingPin, OUTPUT);
   digitalWrite(rightPingPin, LOW);
@@ -43,6 +57,7 @@ void loop() {
   pinMode(rightEchoPin, INPUT);
   rightDuration = pulseIn(rightEchoPin, HIGH);
   rightCm = microsecondsToCentimeters(rightDuration);
+ rightCm=(rightCm<MaxValue) ? rightCm : MaxValue;
   // Printing the distance readings to Serial Monitor
   Serial.print("Front: ");
   Serial.print(frontCm);
@@ -55,8 +70,5 @@ void loop() {
   Serial.print("cm   ");
   Serial.println();
   delay(5);
-}
 
-long microsecondsToCentimeters(long microseconds) {
-  return microseconds / 29 / 2;
 }

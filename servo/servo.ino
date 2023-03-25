@@ -11,6 +11,7 @@ void setup() {
 }
 
 void loop() {
+  /*
   for (pos = 10; pos <= 60; pos += 1) { 
     // in steps of 1 degree
     sagservo.write(pos);              
@@ -20,6 +21,7 @@ void loop() {
     sagservo.write(pos);              
     delay(5);                      
   }
+  
     for (pos = 110; pos <= 160; pos += 1) { 
     // in steps of 1 degree
     solservo.write(pos);              
@@ -29,4 +31,10 @@ void loop() {
     solservo.write(pos);              
     delay(5);                       
   }
+  */
+  solservo.write(160);
+  delay(200);
+  solservo.write(110);
+  delay(200);
+  
 }
