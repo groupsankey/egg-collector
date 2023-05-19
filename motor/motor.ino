@@ -1,10 +1,10 @@
 #include <Servo.h>
-int enRmotor = 2;
-int enLmotor = 7;
-int Lmotorb = 6 ;
-int Lmotorf = 5;
-int Rmotorb =  3;
-int Rmotorf =  4;
+int enRmotor = 5;
+int enLmotor = 10;
+int Lmotorb = 9 ;
+int Lmotorf = 8;
+int Rmotorb =  7;
+int Rmotorf =  6;
 
 Servo solservo;  // create servo object to control a servo
 Servo sagservo;  // create servo object to control a servo

@@ -1,7 +1,6 @@
 #define EXE_INTERVAL_1 2000 //kaç saniye olacağı
 #define EXE_INTERVAL_2 500 //kaç saniye olacağı
 
-
 #include <Wire.h>
 #include <Arduino.h>
 #include <SoftwareSerial.h>
@@ -57,6 +56,15 @@ int kendi_rengin=0;
 long microsecondsToCentimeters(long microseconds) {
   return microseconds / 29 / 2;
 }
+void dur()
+{
+    digitalWrite(Lmotor1,HIGH);
+    digitalWrite(Lmotor2,LOW);
+    digitalWrite(Rmotor1,HIGH);
+    digitalWrite(Rmotor2,LOW);
+    analogWrite (enRmotor, 0);
+    analogWrite (enLmotor, 0);
+  }
 
 void ileri()
 {
@@ -135,7 +143,7 @@ void sol()
     analogWrite (enLmotor, 50);
   }
 
-int pos; //????????????
+int pos;
 void sagkapiac()
 {
   for (pos = 10; pos <= 60; pos += 1) { 
@@ -169,6 +177,47 @@ void solkapikapa()
     delay(5);                       
   } 
   }  
+  
+void renk_oku()
+  {
+  digitalWrite(s2, LOW); //Kırmızıyı filtrelemek için
+  digitalWrite(s3, LOW);
+  kirmizi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
+  Serial.print("Kırmızı= ");
+  Serial.print(kirmizi); //Kırmızı için aldığımız değeri serial monitöre yazdır
+  Serial.print("  ");
+  delay(5); //50 milisaniye bekle
+  digitalWrite(s2, HIGH); //Yeşili filtrelemek için
+  digitalWrite(s3, HIGH);
+  yesil = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
+  Serial.print("Yeşil= ");
+  Serial.print(yesil); //Yeşil için aldığımız değeri serial monitöre yazdır
+  Serial.print("   ");
+  delay(5); //50 milisaniye bekle
+  digitalWrite(s2, LOW); //Maviyi filtrelemek için
+  digitalWrite(s3, HIGH);
+  mavi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
+  Serial.print("Mavi= ");
+  Serial.print(mavi); //Mavi için aldığımız değeri serial monitöre yazdır
+  Serial.println();
+ // delay(55); //50 milisaniye bekle    
+    }
+
+void loop(void) {
+if (onUltrasonic()>15)   
+  {
+    ileri();
+    renk();
+    Serial.print(onUltrasonic());
+  }
+else 
+{
+sagkapiac();
+dur();
+delay(1000);
+
+}
+
 
 
 void setup(void) {
@@ -462,29 +511,7 @@ void loop(void) {
   }
   
   int son_zeminx;
-  
-  digitalWrite(s2, LOW); //Kırmızıyı filtrelemek için
-  digitalWrite(s3, LOW);
-  kirmizi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
-  Serial.print("Kırmızı= ");
-  Serial.print(kirmizi); //Kırmızı için aldığımız değeri serial monitöre yazdır
-  Serial.print("  ");
-  delay(5); //50 milisaniye bekle
-  digitalWrite(s2, HIGH); //Yeşili filtrelemek için
-  digitalWrite(s3, HIGH);
-  yesil = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
-  Serial.print("Yeşil= ");
-  Serial.print(yesil); //Yeşil için aldığımız değeri serial monitöre yazdır
-  Serial.print("   ");
-  delay(5); //50 milisaniye bekle
-  digitalWrite(s2, LOW); //Maviyi filtrelemek için
-  digitalWrite(s3, HIGH);
-  mavi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
-  Serial.print("Mavi= ");
-  Serial.print(mavi); //Mavi için aldığımız değeri serial monitöre yazdır
-  Serial.println();
-  delay(55); //50 milisaniye bekle
-
+  renk_oku();
 
   if(kirmizi>yesil and kirmizi>mavi and kirmizi > 3000){
    Serial.println(" Kırmızı yumurta");

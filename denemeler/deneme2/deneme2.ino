@@ -19,8 +19,8 @@ int enRmotor = 5 ;
 int enLmotor = 10;
 int Lmotor1 = 9 ;
 int Lmotor2 = 8;
-int Rmotor1 =  7;
-int Rmotor2 =  6;
+int Rmotor1 =  6;
+int Rmotor2 =  7;
 int sayac=0;
 int kirmiziyumurta=0;
 int maviyumurta=0;
@@ -470,7 +470,6 @@ void ult()
 
   void renk()
   {
-  
   digitalWrite(s2, LOW); //Kırmızıyı filtrelemek için
   digitalWrite(s3, LOW);
   kirmizi = pulseIn(sensorOut, LOW); //OUT pini üzerindeki LOW süresini okur
@@ -502,6 +501,7 @@ if (onUltrasonic()>15)
   }
 else 
 {
+sagkapiac();
 dur();
 delay(1000);
 

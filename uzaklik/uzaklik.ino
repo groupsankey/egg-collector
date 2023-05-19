@@ -4,7 +4,7 @@ const int leftPingPin = 4; // left sensor
 const int leftEchoPin = 3; // left sensor
 const int rightPingPin = 11; // right sensor
 const int rightEchoPin = 12; // right sensor
-
+int MaxValue = 300;
 
 
 
