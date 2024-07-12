@@ -67,3 +67,23 @@ Adding support for command-line arguments to make it more user-friendly.
 Adding a logging system to track the execution of the script.
 Adding more input parameters to make the function more customizable.
 Adding error handling for common errors such as network timeouts or database connection errors.
+
+Sonar Sensör Pinleri:
+int enRmotor = 5 ;
+int enLmotor = 10;
+int Lmotor1 = 9 ;
+int Lmotor2 = 8;
+int Rmotor1 =  6;
+int Rmotor2 =  7;
+
+motor pinleri:
+int enRmotor = 5 ;
+int enLmotor = 10;
+int Lmotor1 = 9 ;
+int Lmotor2 = 8;
+int Rmotor1 =  6;
+int Rmotor2 =  7;
+
+Servo Pinleri:
+sagservo.attach(13);
+solservo.attach(2);
